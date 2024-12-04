@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import requests
 
 # получаем апи-ключ
@@ -24,7 +26,8 @@ else:
     print(f"Ошибка получения Location Key: {response.status_code}, {response.text}")
     exit()
 
-weather_url = f'http://dataservice.accuweather.com/currentconditions/v1/{location_key}'
+# 1hour forecast
+weather_url = f'http://dataservice.accuweather.com/forecasts/v1/hourly/1hour/{location_key}'
 params={
     'apikey': API_KEY,
     'details': 'true'
@@ -32,7 +35,15 @@ params={
 
 response2 = requests.get(weather_url, params=params)
 if response2.status_code == 200:
-    weather_data = response2.json()
-    print(f'Weather Data: {weather_data}')
+    fc_data = response2.json()
+    print(f'Данные получены')
 else:
     print(f"Ошибка получения Weather Data: {response2.status_code}, {response2.text}")
+
+rain_probability = fc_data[0]['RainProbability'] # %
+temperature = fc_data[0]['Temperature']['Value'] # Unit: F
+wind_speed = fc_data[0]['WindGust']['Speed']['Value'] # Unit: mi/h
+humidity = fc_data[0]['RelativeHumidity'] #%
+
+# print(rain_probability, temperature, wind_speed, humidity)
+
